@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import ProfileCard from "../../components/matches/ProfileCard";
+
+import * as userAPIS from "../../apis/users.apis";
 
 const matchesData = [
 	{
@@ -87,6 +89,7 @@ const matchesData = [
 
 const MatchesScreen = ({ navigation }) => {
 	const [isLoading, setisLoading] = useState(false);
+	const [matches, setmatches] = useState([]);
 
 	const handlePress = (id) => {
 		// Implement logic to connect with the user
@@ -94,14 +97,40 @@ const MatchesScreen = ({ navigation }) => {
 		console.log("Connect with user:", id);
 	};
 
+	useEffect(() => {
+		async function run() {
+			try {
+				setisLoading(true);
+				const d = await userAPIS.getMatches();
+
+				setmatches(
+					d.map((v) => ({
+						...v,
+						location: v.city,
+						imageUrl:
+							"https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+					}))
+				);
+			} catch (error) {
+				console.log(error);
+			} finally {
+				setisLoading(false);
+			}
+		}
+
+		run();
+	}, []);
+
+	console.log(matches);
+
 	return (
 		<View style={styles.container}>
-			{/* <Text style={styles.heading}>Your Matches</Text> */}
+			{isLoading ? <Text style={styles.heading}>Loading...</Text> : ""}
 			<ScrollView
 				style={styles.cardContainer}
 				horizontal
 				showsHorizontalScrollIndicator={false}>
-				{matchesData.map((match) => (
+				{matches.map((match) => (
 					<ProfileCard
 						key={match.id}
 						id={match.id}

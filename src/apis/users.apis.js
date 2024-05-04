@@ -41,7 +41,7 @@ export const onboardUser = async (
 };
 
 export const getMatches = async () => {
-	const { data } = await axios.get("users/matches", body);
+	const { data } = await axios.get("users/matches");
 
 	return data;
 };
