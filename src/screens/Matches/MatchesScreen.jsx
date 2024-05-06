@@ -112,6 +112,7 @@ const MatchesScreen = ({ navigation }) => {
 					}))
 				);
 			} catch (error) {
+				setmatches(matchesData);
 				console.log(error);
 			} finally {
 				setisLoading(false);
